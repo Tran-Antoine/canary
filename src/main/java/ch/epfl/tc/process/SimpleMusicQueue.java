@@ -2,10 +2,10 @@ package ch.epfl.tc.process;
 
 import java.util.*;
 
-public final class SimplePlaylist implements Playlist {
+public final class SimpleMusicQueue implements MusicQueue {
     private final List<Track> tracks;
 
-    public SimplePlaylist(List<Track> tracks) {
+    public SimpleMusicQueue(List<Track> tracks) {
         this.tracks = new LinkedList<>(tracks);
     }
 
@@ -15,27 +15,27 @@ public final class SimplePlaylist implements Playlist {
     }
 
     @Override
-    public Playlist withShuffledTracks(Random random) {
+    public MusicQueue withShuffledTracks(Random random) {
         List<Track> shuffledTracks = new ArrayList<>(tracks);
         Collections.shuffle(shuffledTracks);
-        return new SimplePlaylist(shuffledTracks);
+        return new SimpleMusicQueue(shuffledTracks);
     }
 
     @Override
-    public Playlist withNextAsCurrent() {
+    public MusicQueue withNextAsCurrent() {
         List<Track> newTracks = new LinkedList<>(tracks);
         newTracks.remove(0);
-        return new SimplePlaylist(newTracks);
+        return new SimpleMusicQueue(newTracks);
     }
 
     @Override
-    public Playlist withNewTrack(Track track, int index) {
+    public MusicQueue withNewTrack(Track track, int index) {
         List<Track> newTracks = new ArrayList<>(tracks);
         newTracks.add(index, track);
-        return new SimplePlaylist(newTracks);
+        return new SimpleMusicQueue(newTracks);
     }
 
-    public Playlist withNewTrack(Track track) {
+    public MusicQueue withNewTrack(Track track) {
         return withNewTrack(track, tracks.size());
     }
 
