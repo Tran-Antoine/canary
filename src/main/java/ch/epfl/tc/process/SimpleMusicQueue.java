@@ -11,7 +11,7 @@ public final class SimpleMusicQueue implements MusicQueue {
 
     @Override
     public List<Track> tracks() {
-        return new ArrayList<>(tracks);
+        return Collections.unmodifiableList(tracks);
     }
 
     @Override
