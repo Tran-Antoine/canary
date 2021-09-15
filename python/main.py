@@ -1,5 +1,15 @@
 import os,youtube_dl,sys,requests,time,json
 
+# 
+# Requirements : 
+# youtube-dl requests
+#
+# Library :
+# ffmeg (https://stackoverflow.com/questions/30770155/ffprobe-or-avprobe-not-found-please-install-one)
+#
+
+PREFIX = os.path.join('..', 'tmp')
+
 class YtLogger (object):
     '''
         Custom logger class that only log the exception / error to the screen (as the std output is used in standard operation)
@@ -13,12 +23,20 @@ class YtLogger (object):
     def error(self, msg):
         print(msg)
 
+def search(query):
+    '''
+        Retrieve the first video corresponding to a given query
+    '''
+
+    with youtube_dl.YoutubeDL({'noplaylist': 'True', 'format': 'bestaudio', 'logger': YtLogger()}) as ydl:
+        return ydl.extract_info(f'ytsearch:{query}', download=False)['entries'][0]['id']
+
 def extract_playlist(id):
     '''
         Extract information about a playlist (take some time as it load every video of the playlist)
     '''
-    os.makedirs('./tmp/', exist_ok=True)
-    ydl = youtube_dl.YoutubeDL({'outtmpl': './tmp/%(id)s.%(ext)s', 'logger': YtLogger()})
+    os.makedirs(PREFIX + '/', exist_ok=True)
+    ydl = youtube_dl.YoutubeDL({'outtmpl': os.path.join(PREFIX, '%(id)s.%(ext)s'), 'logger': YtLogger()})
 
     result = ydl.extract_info(
         'https://www.youtube.com/playlist?list='+id,
@@ -52,32 +70,30 @@ def fetch_mp3(id):
     '''
         Fetching the information about the mp3 youtube video and select the format matching m4a
     '''
-    filename = os.path.join('.', 'tmp', id)
-    if os.path.isfile(filename + '.m4a'):
-        return filename + '.m4a'
+    filename = os.path.join(PREFIX, 'v_' + id + '.mp3')
+    if os.path.isfile(filename):
+        return filename
 
-    url = 'https://www.youtube.com/watch?v' + id
-    ydl = youtube_dl.YoutubeDL({'outtmpl': './tmp/%(id)s.%(ext)s', 'logger': YtLogger()})
-    result = ydl.extract_info(
-        'https://www.youtube.com/watch?v='+id,
-        download=False
-    )
+    ydl = youtube_dl.YoutubeDL({
+        'format': 'bestaudio/best',
+        'outtmpl': filename,
+        'logger': YtLogger(),
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    })
 
-
-    formats = [i['url'] for i in result['formats'] if i['ext'] == 'm4a']    
-    if len(formats) == 0:
-        return None
-
-    __fetch_mp3(formats[0], filename + '.m4a')
-
-    return filename + '.m4a'
+    result = ydl.download([id])
+    return filename
 
 
 def __fetch_playlist(id):
     '''
         Private method that fetch information about a playlist (every hour) use of buffered information
     '''
-    filename = os.path.join('.', 'tmp', '~' + id + '.json')
+    filename = os.path.join(PREFIX, '~' + id + '.json')
     now = time.time()
 
     playlist = {}
@@ -112,10 +128,11 @@ def fetch_playlist(id):
 # Syntax Usage :
 #  > python main.py playlist <playlist-id>
 #  > python main.py audio <video-id>
+#  > python main.py search <query-multiple-word-supported>
 #
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         sys.exit(1)
     
     v = sys.argv[2]
@@ -126,6 +143,9 @@ def main():
     elif sys.argv[1] == 'audio':
         print(fetch_mp3(v))
     
+    elif sys.argv[1] == 'search':
+        print(search(' '.join(sys.argv[2:])))
+
     else:
         sys.exit(1)
 
