@@ -1,6 +1,11 @@
 package ch.epfl.tc.io;
 
+import ch.epfl.tc.process.MusicQueue;
+import ch.epfl.tc.process.Track;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Random;
 
 public class ScriptExecTest {
 
@@ -9,7 +14,39 @@ public class ScriptExecTest {
 
         PlayCommand command = new PlayCommand("src/test/resources/test_script.py");
         System.out.println("Launching script");
-        command.execute(new String[]{});
+        command.execute(new MockMusicQueue(), new String[]{});
         System.out.println("Script executed");
+    }
+
+    private static class MockMusicQueue implements MusicQueue {
+        @Override
+        public List<Track> tracks() {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withShuffledTracks(Random random) {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withNextAsCurrent() {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withNewTrack(Track track, int index) {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withNewTrack(Track track) {
+            return null;
+        }
+
+        @Override
+        public Track currentTrack() {
+            return null;
+        }
     }
 }

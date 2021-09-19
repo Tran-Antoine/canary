@@ -1,12 +1,13 @@
 package ch.epfl.tc.io;
 
+import ch.epfl.tc.process.MusicQueue;
+import ch.epfl.tc.process.SimpleTrack;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PlayCommand implements BotCommand {
+public class PlayCommand implements MusicCommand {
 
     private final String scriptPath;
 
@@ -25,18 +26,19 @@ public class PlayCommand implements BotCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public MusicQueue execute(MusicQueue current, String[] args) {
+
+        MusicQueue result = current;
 
         String arg = String.join(" ", args);
         try {
             Process process = new ProcessBuilder("python3", scriptPath, arg).start();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            List<String> paths = new ArrayList<>();
 
             String line;
             while((line = reader.readLine()) != null) {
-                paths.add(line);
+                result = result.withNewTrack(new SimpleTrack(line));
             }
 
             process.waitFor();
@@ -45,5 +47,7 @@ public class PlayCommand implements BotCommand {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+
+        return result;
     }
 }
