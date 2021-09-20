@@ -14,12 +14,18 @@ public class YoutubeDLUtility {
     private static final String SCRIPT_PATH = "python/youtube.py";
     private static final String PYTHON_EXEC = "py";
 
-    public String run(String args) {
+    public static String run(String... args) {
         try {
-            Process process = new ProcessBuilder(PYTHON_EXEC, SCRIPT_PATH, args).start();
+            String[] allArgs = new String[args.length + 2];
+            allArgs[0] = PYTHON_EXEC;
+            allArgs[1] = SCRIPT_PATH;
+            System.arraycopy(args, 0, allArgs, 2, args.length);
+
+            Process process = new ProcessBuilder(allArgs).start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String lines = reader.lines().reduce((s1, s2) -> s1 + "\n" + s2).orElse("");
+            System.out.println(lines);
 
             process.waitFor();
             process.destroy();
@@ -35,18 +41,18 @@ public class YoutubeDLUtility {
         }
     }
 
-    public List<Track> fetchPlaylist(String playlistId) {
-        return Arrays.stream(run("playlist " + playlistId).split(Pattern.quote("\n")))
+    public static List<Track> fetchPlaylist(String playlistId) {
+        return Arrays.stream(run("playlist", playlistId).split(Pattern.quote("\n")))
                 .map(SimpleTrack::ofRawPythonOutput)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Track fetchVideo(String videoId) {
-        return SimpleTrack.ofRawPythonOutput(run("video " + videoId));
+    public static Track fetchVideo(String videoId) {
+        return SimpleTrack.ofRawPythonOutput(run("video", videoId));
     }
 
-    public Track queryFirstVideo(String query) {
-        return SimpleTrack.ofRawPythonOutput(run("query " + query));
+    public static Track queryFirstVideo(String query) {
+        return SimpleTrack.ofRawPythonOutput(run("query", query));
     }
 
 }

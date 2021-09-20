@@ -1,7 +1,9 @@
 import os,youtube_dl,sys,base64
 
 def encode_string(s):
-    return base64.b64encode(s)
+    if isinstance(s, str):
+        s = s.encode('utf-8')
+    return base64.b64encode(s).decode('utf-8')
 
 class YtLogger (object):
     '''
@@ -19,7 +21,7 @@ class YtLogger (object):
         print(msg)
 
 def __extract_format(j):
-    data = ','.join([encode_string(j['url']), encode_string(j['ext']), j['filesize']])
+    data = ','.join([encode_string(j['url']), encode_string(j['ext']), str(j['filesize'])])
     return data
 
 def __extract_video_information(j):
@@ -36,6 +38,7 @@ def __extract_video_information(j):
         f = __extract_format(m4a_filter[0])
     
     else:
+        print('No format found')
         sys.exit(1)
 
     data = ','.join([encode_string(j['id']), encode_string(j['title']), f])
@@ -55,7 +58,7 @@ def fetch_playlist(id):
     '''
     with youtube_dl.YoutubeDL({'logger': YtLogger()}) as ydl:
         result = ydl.extract_info(f'https://www.youtube.com/playlist?list={id}', download=False)
-        return [__extract_video_information(i) for i in result['entries']]
+        return '\n'.join([__extract_video_information(i) for i in result['entries']])
 
 def fetch_video(id):
     '''
@@ -84,6 +87,7 @@ def main():
         print(search(' '.join(sys.argv[2:])))
     
     else:
+        print('sys.argv[1] not recognize argument')
         sys.exit(1)
 
 if __name__ == '__main__':
