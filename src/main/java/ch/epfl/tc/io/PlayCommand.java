@@ -30,7 +30,7 @@ public class PlayCommand implements MusicCommand {
 
         MusicQueue result = current;
 
-        String arg = String.join(" ", args);
+        /*String arg = String.join(" ", args);
         try {
             Process process = new ProcessBuilder("py", scriptPath, arg).start();
 
@@ -50,7 +50,7 @@ public class PlayCommand implements MusicCommand {
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
         return result;
     }

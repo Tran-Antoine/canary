@@ -41,7 +41,7 @@ public class QueueManager extends ListenerAdapter {
         }
 
         String[] cutArgs = new String[args.length - 1];
-        System.arraycopy(args, 0, cutArgs, 0, cutArgs.length);
+        System.arraycopy(args, 1, cutArgs, 0, cutArgs.length);
 
         for (MusicCommand command : commands) {
             if(args[0].equals(PREFIX + command.name())) {
