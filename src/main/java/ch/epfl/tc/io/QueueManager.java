@@ -20,7 +20,12 @@ public class QueueManager extends ListenerAdapter {
 
     static {
         commands = new HashSet<>(Arrays.asList(
-                new PlayCommand(SCRIPT_PATH)
+                new PlayCommand(SCRIPT_PATH),
+                new PlaytopCommand(),
+                new PauseCommand(),
+                new ShuffleCommand(),
+                new SkipCommand(),
+                new QueueCommand()
         ));
     }
 
@@ -30,6 +35,10 @@ public class QueueManager extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+
+        if(event.getAuthor().isBot()) {
+            return;
+        }
 
         String[] args = event
                 .getMessage()
@@ -45,7 +54,7 @@ public class QueueManager extends ListenerAdapter {
 
         for (MusicCommand command : commands) {
             if(args[0].equals(PREFIX + command.name())) {
-                queue = command.execute(queue, cutArgs);
+                queue = command.execute(queue, cutArgs, ChannelResponder.fromChannel(event.getTextChannel()));
             }
         }
     }

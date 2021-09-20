@@ -14,7 +14,7 @@ public class ScriptExecTest {
 
         PlayCommand command = new PlayCommand("src/test/resources/test_script.py");
         System.out.println("Launching script");
-        command.execute(new MockMusicQueue(), new String[]{});
+        command.execute(new MockMusicQueue(), new String[]{}, null);
         System.out.println("Script executed");
     }
 
@@ -22,6 +22,11 @@ public class ScriptExecTest {
         @Override
         public List<Track> tracks() {
             return null;
+        }
+
+        @Override
+        public boolean isPaused() {
+            return false;
         }
 
         @Override
@@ -41,6 +46,16 @@ public class ScriptExecTest {
 
         @Override
         public MusicQueue withNewTrack(Track track) {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withSkippedTracks(int count) {
+            return null;
+        }
+
+        @Override
+        public MusicQueue withPaused(boolean paused) {
             return null;
         }
 

@@ -1,11 +1,6 @@
 package ch.epfl.tc.io;
 
 import ch.epfl.tc.process.MusicQueue;
-import ch.epfl.tc.process.SimpleTrack;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class PlayCommand implements MusicCommand {
 
@@ -26,7 +21,7 @@ public class PlayCommand implements MusicCommand {
     }
 
     @Override
-    public MusicQueue execute(MusicQueue current, String[] args) {
+    public MusicQueue execute(MusicQueue current, String[] args, DirectResponder responder) {
 
         MusicQueue result = current;
 

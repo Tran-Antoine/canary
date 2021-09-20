@@ -6,4 +6,5 @@ public interface ObservableMusicQueue {
 
     Track currentTrack();
     List<Track> tracks();
+    boolean isPaused();
 }
