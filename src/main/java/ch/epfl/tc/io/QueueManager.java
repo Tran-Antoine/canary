@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class QueueManager extends ListenerAdapter {
 
-    private static final String PREFIX = "!";
+    private static final String PREFIX = "$";
     private static final String SCRIPT_PATH = "python/fetch.py";
     private static final Set<? extends MusicCommand> commands;
 
