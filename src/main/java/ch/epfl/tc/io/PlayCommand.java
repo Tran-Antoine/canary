@@ -32,7 +32,7 @@ public class PlayCommand implements MusicCommand {
 
         String arg = String.join(" ", args);
         try {
-            Process process = new ProcessBuilder("python3", scriptPath, arg).start();
+            Process process = new ProcessBuilder("py", scriptPath, arg).start();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -43,6 +43,10 @@ public class PlayCommand implements MusicCommand {
 
             process.waitFor();
             process.destroy();
+
+            if(process.exitValue() != 0) {
+                System.out.println("Warning: python script did not execute with value 0");
+            }
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
